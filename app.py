@@ -1,13 +1,16 @@
-import streamlit as st
 import pandas as pd
 import numpy as np
 import pydeck as pdk
+import datetime
+import streamlit as st
+
 
 @st.cache
 def load_dataset():
-    df = pd.read_csv("data.csv")
+    df = pd.read_csv("new_data.csv")
     df = df[pd.notnull(df['longitude']) & pd.notnull(df['latitude'])]
     return df
+
 
 @st.cache
 def load_geo_subset(df):
@@ -15,21 +18,85 @@ def load_geo_subset(df):
     geo_df.dropna(inplace=True)
     return geo_df
 
+
 @st.cache
 def city_list(df):
     return sorted(list(df['city_or_county'].unique()))
 
+
 @st.cache
-def load_city_subset(df, city):
+def load_city_subset(df, city, suspect_gender=None, victim_gender=None):
     subdf = df[df['city_or_county'] == city].copy()
-    subdf = subdf[["longitude", "latitude", "address", "n_killed", "n_injured"]]
+
+    if suspect_gender is not None:
+        subdf = subdf[subdf['suspect_gender'] == suspect_gender]
+    if victim_gender is not None:
+        subdf = subdf[subdf['victim_gender'] == victim_gender]
+    subdf = subdf[["longitude", "latitude",
+                   "address", "n_killed", "n_injured"]]
+
     subdf.dropna(inplace=True)
     return subdf
+
+
+@st.cache
+def load_date_subset(df, date):
+    subdf = df[df['date'].str.contains(date[:7])].copy()
+    return subdf
+
+
+@st.cache
+def get_user_mapping(element):
+    if element == "NA":
+        return {}
+    mapping = {}
+    for d in element.split("||"):
+        try:
+            key = d.split("::")[0]
+            val = d.split("::")[1]
+            if key not in mapping:
+                mapping[key] = val
+        except:
+            pass
+    return mapping
+
+
+@st.cache
+def get_unique_name(df, column_name):
+    s = set()
+    for item in df[column_name]:
+        for k, v in item.items():
+            s.add(v)
+    return s
+
 
 class AppLayout:
     def __init__(self) -> None:
         self.df = load_dataset()
-    
+        self.df_unique_name = dict()
+
+    def preprocess(self) -> None:
+        # fill nan and create new map column
+        self.df['participant_type'] = self.df['participant_type'].fillna("NA")
+        self.df['participant_type_map'] = self.df['participant_type'].apply(
+            lambda x: get_user_mapping(x))
+        self.df['participant_age'] = self.df['participant_age'].fillna("NA")
+        self.df['participant_age_map'] = self.df['participant_age'].apply(
+            lambda x: get_user_mapping(x))
+        self.df['participant_age_group'] = self.df['participant_age_group'].fillna(
+            "NA")
+        self.df['participant_age_group_map'] = self.df['participant_age_group'].apply(
+            lambda x: get_user_mapping(x))
+        self.df['participant_gender'] = self.df['participant_gender'].fillna(
+            "NA")
+        self.df['participant_gender_map'] = self.df['participant_gender'].apply(
+            lambda x: get_user_mapping(x))
+        # get unique name
+        for name in ['participant_type_map', 'participant_age_group_map', 'participant_gender_map']:
+            self.df_unique_name[name] = get_unique_name(self.df, name)
+
+        return
+
     def make_country_map(self):
         geo_df = load_geo_subset(self.df)
         st.pydeck_chart(pdk.Deck(
@@ -50,9 +117,19 @@ class AppLayout:
                 )
             ],
         ))
-    
-    def make_city_map(self, select_city):
-        city_df = load_city_subset(self.df, select_city)
+
+    def make_city_map(self, select_city, select_date = None, suspect_gender = None, victim_gender = None):
+
+        if select_date is not None:
+            city_df = load_city_subset(load_date_subset(
+                self.df, select_date), select_city)
+        elif suspect_gender is not None:
+            city_df = load_city_subset(self.df, select_city, suspect_gender=suspect_gender)
+        elif victim_gender is not None:
+            city_df = load_city_subset(self.df, select_city, victim_gender=victim_gender)
+        else:
+            city_df = load_city_subset(self.df, select_city)
+
         print(city_df)
         init_lng = city_df["longitude"].median()
         init_lat = city_df["latitude"].median()
@@ -65,7 +142,7 @@ class AppLayout:
                 zoom=10,
                 pitch=0,
             ),
-            layers=[     
+            layers=[
                 pdk.Layer(
                     'ScatterplotLayer',   # doc: https://pydeck.gl/gallery/scatterplot_layer.html
                     data=city_df,
@@ -75,17 +152,28 @@ class AppLayout:
                     pickable=True
                 ),
             ],
-            tooltip={"text": "{address}\nn_killed={n_killed}\nn_injured={n_injured}"}
-            )
+            tooltip={
+                "text": "{address}\nn_killed={n_killed}\nn_injured={n_injured}"}
+        )
         )
 
+
 if __name__ == "__main__":
+
     st.set_page_config(layout="wide")
     st.title("U.S. Gun Shots")
-    app = AppLayout()    
+    app = AppLayout()
     app.make_country_map()
 
     select_city = st.selectbox(label='City', options=city_list(app.df))
-    app.make_city_map(select_city)
-    
+    select_date = st.sidebar.slider(
+        label="Choose time",
+        value=datetime.date(2018, 3, 31), key="all_data", min_value=datetime.date(2013, 1, 1), max_value=datetime.date(2018, 3, 31)).strftime("%Y-%m-%d")
+    app.make_city_map(select_city, select_date=select_date)
+
+    select_gender = st.selectbox(label='Suspect Gender', options=['Male', 'Female'])
+    app.make_city_map(select_city, suspect_gender=select_gender)
+
+    victim_gender = st.selectbox(label='Victim Gender', options=['Male', 'Female'])
+    app.make_city_map(select_city, victim_gender=victim_gender)
 

@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import pydeck as pdk
 from hydralit import HydraApp
 from hydralit import HydraHeadApp

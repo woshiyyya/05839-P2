@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import pydeck as pdk
-import datetime
+from hydralit import HydraApp
+from hydralit import HydraHeadApp
 
 
 @st.cache
@@ -93,65 +93,78 @@ class AppLayout:
 
     def make_country_map(self):
         geo_df = load_geo_subset(self.df)
-        st.pydeck_chart(pdk.Deck(
-            map_style='mapbox://styles/mapbox/light-v9',
-            initial_view_state=pdk.ViewState(
-                latitude=37.76,
-                longitude=-95.8,
-                zoom=3,
-                pitch=0,
-            ),
-            layers=[
-                pdk.Layer(
-                    "HeatmapLayer",
-                    data=geo_df,
-                    get_position=["longitude", "latitude"],
-                    opacity=0.5,
-                    aggregation='MEAN',
-                )
-            ],
-        ))
-
-    def make_city_map(self, select_city, select_date):
-        city_df = load_city_subset(load_date_subset(
-            self.df, select_date), select_city)
-        print(city_df)
-        init_lng = city_df["longitude"].median()
-        init_lat = city_df["latitude"].median()
-        print(select_city, init_lng, init_lat)
-        st.pydeck_chart(pdk.Deck(
-            map_style='mapbox://styles/mapbox/outdoors-v11',
-            initial_view_state=pdk.ViewState(
-                latitude=init_lat,
-                longitude=init_lng,
-                zoom=10,
-                pitch=0,
-            ),
-            layers=[
-                pdk.Layer(
-                    'ScatterplotLayer',   # doc: https://pydeck.gl/gallery/scatterplot_layer.html
-                    data=city_df,
-                    get_position=["longitude", "latitude"],
-                    get_color=[200, 30, 0, 160],
-                    get_radius=70,
-                    pickable=True
+        col1, _ = st.columns([4, 1])
+        with col1:
+            st.pydeck_chart(pdk.Deck(
+                map_style='mapbox://styles/mapbox/light-v9',
+                initial_view_state=pdk.ViewState(
+                    latitude=37.76,
+                    longitude=-95.8,
+                    zoom=3,
+                    pitch=0,
                 ),
-            ],
-            tooltip={
-                "text": "{address}\nn_killed={n_killed}\nn_injured={n_injured}"}
-        )
-        )
+                layers=[
+                    pdk.Layer(
+                        "HeatmapLayer",
+                        data=geo_df,
+                        get_position=["longitude", "latitude"],
+                        opacity=0.5,
+                        aggregation='MEAN',
+                    )
+                ],
+            ))
+
+    def make_city_map(self):
+        col1, _ = st.columns([4, 1])
+        with col1:
+            select_city = st.selectbox(
+                label='City', options=city_list(self.df))
+            city_df = load_city_subset(self.df, select_city)
+            init_lng = city_df["longitude"].median()
+            init_lat = city_df["latitude"].median()
+            st.pydeck_chart(pdk.Deck(
+                map_style='mapbox://styles/mapbox/outdoors-v11',
+                initial_view_state=pdk.ViewState(
+                    latitude=init_lat,
+                    longitude=init_lng,
+                    zoom=10,
+                    pitch=0,
+                ),
+                layers=[
+                    pdk.Layer(
+                        'ScatterplotLayer',   # doc: https://pydeck.gl/gallery/scatterplot_layer.html
+                        data=city_df,
+                        get_position=["longitude", "latitude"],
+                        get_color=[200, 30, 0, 160],
+                        get_radius=70,
+                        pickable=True
+                    ),
+                ],
+                tooltip={
+                    "text": "{address}\nn_killed={n_killed}\nn_injured={n_injured}"}
+            )
+            )
 
 
 if __name__ == "__main__":
+    # st.set_page_config(layout="wide")
+    over_theme = {'txc_inactive': '#FFFFFF'}
+    app = HydraApp(
+        title='Test Hydra APP',
+        favicon="🐙",
+        # hide_streamlit_markers=True,
+        banner_spacing=[5, 30, 60, 30, 5],
+        use_navbar=True,
+        navbar_sticky=True,
+        navbar_animation=True,
+        navbar_theme=over_theme,
+    )
 
-    st.set_page_config(layout="wide")
-    st.title("U.S. Gun Shots")
-    app = AppLayout()
-    app.make_country_map()
+    app.add_app("🐙Home1", app=MainApp())
+    app.add_app("Home2", app=MainApp())
 
-    select_city = st.selectbox(label='City', options=city_list(app.df))
-    select_date = st.sidebar.slider(
-        label="Choose time",
-        value=datetime.date(2018, 3, 31), key="all_data", min_value=datetime.date(2013, 1, 1), max_value=datetime.date(2018, 3, 31)).strftime("%Y-%m-%d")
-    app.make_city_map(select_city, select_date)
+    complex_nav = {
+        'Home-A': ['🐙Home1'],
+        'Home-B': ['Home2'],
+    }
+    app.run(complex_nav)

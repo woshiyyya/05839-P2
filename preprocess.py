@@ -3,7 +3,7 @@ import pandas as pd
 import pydeck as pdk
 from hydralit import HydraApp
 from hydralit import HydraHeadApp
-from preprocess_page import *
+
 
 @st.cache
 def load_dataset():
@@ -33,9 +33,63 @@ def load_city_subset(df, city):
     return subdf
 
 
+@st.cache
+def load_date_subset(df, date):
+    subdf = df[df['date'] <= date].copy()
+    return subdf
+
+
+@st.cache
+def get_user_mapping(element):
+    if element == "NA":
+        return {}
+    mapping = {}
+    for d in element.split("||"):
+        try:
+            key = d.split("::")[0]
+            val = d.split("::")[1]
+            if key not in mapping:
+                mapping[key] = val
+        except:
+            pass
+    return mapping
+
+
+@st.cache
+def get_unique_name(df, column_name):
+    s = set()
+    for item in df[column_name]:
+        for k, v in item.items():
+            s.add(v)
+    return s
+
+
 class AppLayout:
     def __init__(self) -> None:
         self.df = load_dataset()
+        self.df_unique_name = dict()
+
+    def preprocess(self) -> None:
+        # fill nan and create new map column
+        self.df['participant_type'] = self.df['participant_type'].fillna("NA")
+        self.df['participant_type_map'] = self.df['participant_type'].apply(
+            lambda x: get_user_mapping(x))
+        self.df['participant_age'] = self.df['participant_age'].fillna("NA")
+        self.df['participant_age_map'] = self.df['participant_age'].apply(
+            lambda x: get_user_mapping(x))
+        self.df['participant_age_group'] = self.df['participant_age_group'].fillna(
+            "NA")
+        self.df['participant_age_group_map'] = self.df['participant_age_group'].apply(
+            lambda x: get_user_mapping(x))
+        self.df['participant_gender'] = self.df['participant_gender'].fillna(
+            "NA")
+        self.df['participant_gender_map'] = self.df['participant_gender'].apply(
+            lambda x: get_user_mapping(x))
+        # get unique name
+        for name in ['participant_type_map', 'participant_age_group_map', 'participant_gender_map']:
+            self.df_unique_name[name] = get_unique_name(self.df, name)
+
+        return
 
     def make_country_map(self):
         geo_df = load_geo_subset(self.df)
@@ -92,20 +146,6 @@ class AppLayout:
             )
 
 
-class MainApp(HydraHeadApp):
-    def __init__(self) -> None:
-        self._app = AppLayout()
-
-    def run(self):
-        st.title("U.S. Gun Shots")
-        st.sidebar.selectbox(
-            "How would you like to be contacted?",
-            ("Email", "Home phone", "Mobile phone")
-        )
-        self._app.make_country_map()
-        self._app.make_city_map()
-
-
 if __name__ == "__main__":
     # st.set_page_config(layout="wide")
     over_theme = {'txc_inactive': '#FFFFFF'}
@@ -120,15 +160,11 @@ if __name__ == "__main__":
         navbar_theme=over_theme,
     )
 
-    app.add_app("Home", app=MainApp())
-    app.add_app("Preprocess", app=AppPreprocessPage())
-    app.add_app("Presentation", app=AppVideoPage())
-    app.add_app("Contacts", app=AppContactPage())
+    app.add_app("🐙Home1", app=MainApp())
+    app.add_app("Home2", app=MainApp())
 
     complex_nav = {
-        'Home': ['Home'],
-        'Preprocess': ['Preprocess'],
-        'Presentation': ['Presentation'],
-        'Contacts': ['Contacts'],
+        'Home-A': ['🐙Home1'],
+        'Home-B': ['Home2'],
     }
     app.run(complex_nav)

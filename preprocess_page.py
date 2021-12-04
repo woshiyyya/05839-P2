@@ -72,7 +72,7 @@ get_unique_name(df,'participant_gender_map')
 
         """
 
-    def deploy(self):
+    def run(self):
         st.title("The basic preprocess of DataSet")
         st.header("Load data", anchor=None)
         st.write(self.text_loadSubData)
@@ -92,7 +92,7 @@ class AppContactPage:
     def __init__(self) -> None:
         pass
 
-    def deploy(self):
+    def run(self):
         st.title("Contact")
         st.write("**Tianyi Sun**, tsun2@andrew.cmu.edu")
         st.write("**Yufan Song**, yufans@andrew.cmu.edu")
@@ -104,15 +104,15 @@ class AppVideoPage:
     def __init__(self) -> None:
         self.url = "https://www.youtube.com/embed/_5XkJC3xuc0?controls=0&showinfo=0&modestbranding=1&wmode=transparent&disablekb=1&rel=0&enablejsapi=1&origin=https%3A%2F%2Fwww.cmu.edu&widgetid=1"
 
-    def deploy(self):
+    def run(self):
         st.title("Presentation")
         st.video(self.url)
 
 
 if __name__ == "__main__":
     contact_app = AppContactPage()
-    contact_app.deploy()
+    contact_app.run()
     video_app = AppVideoPage()
-    video_app.deploy()
+    video_app.run()
     prosess_app = AppPreprocessPage()
-    prosess_app.deploy()
+    prosess_app.run()

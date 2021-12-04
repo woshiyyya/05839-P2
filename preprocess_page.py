@@ -1,7 +1,7 @@
 import streamlit as st
+from hydralit import HydraHeadApp
 
-
-class AppPreprocessPage:
+class AppPreprocessPage(HydraHeadApp):
     def __init__(self) -> None:
         self.text_loadSubData = "We load the dataset, and select the corresponding columns which maybe used in our image."
         self.code_loadSubData = """
@@ -88,7 +88,7 @@ get_unique_name(df,'participant_gender_map')
         st.code(self.code_findUniqueType, language="python")
 
 
-class AppContactPage:
+class AppContactPage(HydraHeadApp):
     def __init__(self) -> None:
         pass
 
@@ -100,7 +100,7 @@ class AppContactPage:
         st.write("**Zhouyang Li**, zhouyanl@andrew.cmu.edu")
 
 
-class AppVideoPage:
+class AppVideoPage(HydraHeadApp):
     def __init__(self) -> None:
         self.url = "https://www.youtube.com/embed/_5XkJC3xuc0?controls=0&showinfo=0&modestbranding=1&wmode=transparent&disablekb=1&rel=0&enablejsapi=1&origin=https%3A%2F%2Fwww.cmu.edu&widgetid=1"
 

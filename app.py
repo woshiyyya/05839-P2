@@ -3,7 +3,7 @@ import pandas as pd
 import pydeck as pdk
 from hydralit import HydraApp
 from hydralit import HydraHeadApp
-
+from preprocess_page import *
 
 @st.cache
 def load_dataset():
@@ -120,11 +120,15 @@ if __name__ == "__main__":
         navbar_theme=over_theme,
     )
 
-    app.add_app("🐙Home1", app=MainApp())
-    app.add_app("Home2", app=MainApp())
+    app.add_app("Home", app=MainApp())
+    app.add_app("Preprocess", app=AppPreprocessPage())
+    app.add_app("Presentation", app=AppVideoPage())
+    app.add_app("Contacts", app=AppContactPage())
 
     complex_nav = {
-        'Home-A': ['🐙Home1'],
-        'Home-B': ['Home2'],
+        'Home': ['Home'],
+        'Preprocess': ['Preprocess'],
+        'Presentation': ['Presentation'],
+        'Contacts': ['Contacts'],
     }
     app.run(complex_nav)

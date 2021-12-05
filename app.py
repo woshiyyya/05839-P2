@@ -4,6 +4,7 @@ import pydeck as pdk
 from hydralit import HydraApp
 from hydralit import HydraHeadApp
 from preprocess_page import *
+from data_stat_page import *
 
 @st.cache
 def load_dataset():
@@ -121,12 +122,14 @@ if __name__ == "__main__":
     )
 
     app.add_app("Home", app=MainApp())
+    app.add_app("Data Statistics", app=DataStatApp())
     app.add_app("Preprocess", app=AppPreprocessPage())
     app.add_app("Presentation", app=AppVideoPage())
     app.add_app("Contacts", app=AppContactPage())
 
     complex_nav = {
         'Home': ['Home'],
+        'Data Statistics': ['Data Statistics'],
         'Preprocess': ['Preprocess'],
         'Presentation': ['Presentation'],
         'Contacts': ['Contacts'],

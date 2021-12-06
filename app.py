@@ -8,6 +8,7 @@ from preprocess_page import *
 from data_stat_page import *
 
 from utils import add_sidebar
+import plotly.graph_objects as go
 
 @st.cache
 def load_dataset():
@@ -25,7 +26,7 @@ def load_geo_subset(df):
 
 @st.cache
 def city_list(df):
-    return sorted(list(df['city_or_county'].unique()))
+    return list(df['city_or_county'].value_counts().index)
 
 
 @st.cache
@@ -65,11 +66,11 @@ class AppLayout:
             ))
 
     def make_city_map(self):
-        col1, _ = st.columns([4, 1])
+        select_city = st.selectbox(
+            label='Choose a city:', options=city_list(self.df))
+        city_df = load_city_subset(self.df, select_city)
+        col1, col2 = st.columns([5, 2])
         with col1:
-            select_city = st.selectbox(
-                label='City', options=city_list(self.df))
-            city_df = load_city_subset(self.df, select_city)
             init_lng = city_df["longitude"].median()
             init_lat = city_df["latitude"].median()
             st.pydeck_chart(pdk.Deck(
@@ -94,15 +95,36 @@ class AppLayout:
                     "text": "{address}\nn_killed={n_killed}\nn_injured={n_injured}"}
             )
             )
-
-
+        with col2:
+            cities = self.df['city_or_county'].value_counts()[:20][::-1]
+            fig = go.Figure()
+            fig.add_trace(go.Bar(x=cities, 
+                                 y=cities.index, 
+                                 orientation='h',
+                                 marker=dict(
+                                    color='rgba(246, 78, 139, 0.6)',
+                                    line=dict(
+                                        color='rgba(246, 78, 139, 1.0)',
+                                        width=1))))
+            fig.update_layout(title="Top 20 Most \"Dangerous\" Cities", 
+                              xaxis=dict(
+                                title_text="#Gun shots in 2013-2018"),
+                              margin=dict(
+                                    l=50,
+                                    r=50,
+                                    b=50,
+                                    t=50,
+                                ), width=400, height=550)
+            st.plotly_chart(fig)
+            
 class MainApp(HydraHeadApp):
     def __init__(self) -> None:
         self._app = AppLayout()
 
     def run(self):
-        st.title("U.S. Gun Shots")
+        st.header("Geographical distribution of Gun Shots in the U.S.")
         self._app.make_country_map()
+        st.header("City-wise Gun Shots Browser")
         self._app.make_city_map()
         add_sidebar()
 

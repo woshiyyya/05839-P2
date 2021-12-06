@@ -5,7 +5,8 @@ def add_sidebar():
     st.sidebar.text_area(label="Share your thoughts here:")
     st.sidebar.button("Submit")
     
-    st.sidebar.subheader("Contacts")
+    st.sidebar.subheader("Authors:")
+    st.sidebar.markdown("**Interactive DS Group 23**")
     st.sidebar.markdown("Tianyi Sun, <tsun2@andrew.cmu.edu>")
     st.sidebar.markdown("Yufan Song, <yufans@andrew.cmu.edu>")
     st.sidebar.markdown("YunXuan Xiao, <yunxuan2@andrew.cmu.edu>")

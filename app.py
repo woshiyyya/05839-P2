@@ -183,7 +183,7 @@ if __name__ == "__main__":
     # st.set_page_config(layout="wide")
     over_theme = {'txc_inactive': '#FFFFFF'}
     app = HydraApp(
-        title='Test Hydra APP',
+        title='U.S. Gun Shots Analysis',
         favicon="🐙",
         # hide_streamlit_markers=True,
         banner_spacing=[5, 30, 60, 30, 5],

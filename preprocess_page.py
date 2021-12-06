@@ -3,6 +3,7 @@ from hydralit import HydraHeadApp
 
 from utils import add_sidebar
 
+
 class AppPreprocessPage(HydraHeadApp):
     def __init__(self) -> None:
         self.text_loadSubData = "We load the dataset, and select the corresponding columns which maybe used in our image."

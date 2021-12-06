@@ -207,16 +207,16 @@ if __name__ == "__main__":
     )
 
     app.add_app("Home", app=AppIntro())
+    app.add_app("Pre-Preprocess", app=AppPreprocessPage())
     app.add_app("Geo Distribution", app=MainApp())
     app.add_app("Data Statistics", app=DataStatApp())
-    app.add_app("Pre-Preprocess", app=AppPreprocessPage())
     app.add_app("Presentation", app=AppVideoPage())
 
     complex_nav = {
         'Home': ['Home'],
+        'Pre-Preprocess': ['Pre-Preprocess'],
         'Geo Distribution': ['Geo Distribution'],
         'Data Statistics': ['Data Statistics'],
-        'Pre-Preprocess': ['Pre-Preprocess'],
         'Presentation': ['Presentation'],
     }
     app.run(complex_nav)

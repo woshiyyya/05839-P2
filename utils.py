@@ -11,3 +11,6 @@ def add_sidebar():
     st.sidebar.markdown("Yufan Song, <yufans@andrew.cmu.edu>")
     st.sidebar.markdown("YunXuan Xiao, <yunxuan2@andrew.cmu.edu>")
     st.sidebar.markdown("Zhouyang Li, <zhouyanl@andrew.cmu.edu>")
+    
+    st.sidebar.subheader("Github Repo:")
+    st.sidebar.markdown("[https://github.com/woshiyyya/05839-P2](https://github.com/woshiyyya/05839-P2)")

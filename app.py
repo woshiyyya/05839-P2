@@ -80,11 +80,19 @@ def get_unique_name(df, column_name):
 class AppLayout:
     def __init__(self) -> None:
         self.df = load_dataset()
+        self.Para1_1 = "Which are the most \"dangerous\" regions in the United States? This could be a question that everyone lives in this country really cares about.\n \
+In this project, we collected more than 260,000 incidents of gun violence in the United States from 2013 to 2018, and used the heat map below to visualize the frequency of shootings."
+        self.Para1_2 = "According to this chart, the **Chicago** metropolitan area, the **the East Coast** (e.g. New York, Washington, D.C., New Jersey), and **the West Coast**(e.g. California) have the highest intensity, while the Middle America shows much less shooting cases. \
+One of the reasons behind this may be related to the population density of these areas. In general, the area with high shootings frequency also has higher density of population."
+        self.Para2_1 = "During the first seven months of 2021, there have been 1,973 shootings in the city of Chicago, with 2,471 total victims. \
+In the following chart, we visualized the geographic distribution of shooting at the city-level granularity. You can choose a city using the slide bar."
+        self.Para2_2 = "We choose Chicago as an example. Here we noticed a large number of shooting cases scattered across the city. We can also find that the University of Chicago(near Hyde Park) is surrounded by a dense cluster of red points, which indicates its terrible security condition."
 
     def make_country_map(self):
         geo_df = load_geo_subset(self.df, self.start_date, self.end_date)
         col1, _ = st.columns([4, 1])
         with col1:
+            st.write(self.Para1_1)
             st.pydeck_chart(pdk.Deck(
                 map_style='mapbox://styles/mapbox/light-v9',
                 initial_view_state=pdk.ViewState(
@@ -103,8 +111,13 @@ class AppLayout:
                     )
                 ],
             ))
+            st.markdown(self.Para1_2)
+            with st.expander("See Population Distribution"):
+                st.image("resources/population.jpeg", use_column_width=True)
 
     def make_city_map(self):
+        st.write(self.Para2_1)
+        st.write(self.Para2_2)
         select_city = st.selectbox(
             label='Choose a city:', options=city_list(self.df))
         city_df = load_city_subset(self.df, select_city, self.start_date, self.end_date)

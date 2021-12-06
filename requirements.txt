@@ -4,3 +4,4 @@ pydeck
 hydralit
 scipy
 plotly
+pickle

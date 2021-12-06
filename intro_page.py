@@ -55,11 +55,11 @@ analysis its distribution on the following dimensions:
 1. The Geographical Distribution.
 
 2. The Suspencts' Feature Distribution.
-- Is male or female more easily get involved in gun violence as a suspect?
-- Is male or female more easily to be a victim?
-- What is the age distribution of suspects and victims?
-- What is the survival rate of gun violence?
-- Is gun violence seasonal?
+    - Is male or female more easily get involved in gun violence as a suspect?
+    - Is male or female more easily to be a victim?
+    - What is the age distribution of suspects and victims?
+    - What is the survival rate of gun violence?
+    - Is gun violence seasonal?
 
 3. The Victims' Feature Distribution.
 
@@ -67,7 +67,7 @@ analysis its distribution on the following dimensions:
         """
 
         self.dataset = """
-Our dataset get from the Kaggle： this dataset aims to change that; they make a record of more than 260k gun violence incidents, with detailed information about each incident, available in CSV format. They hope that this will make it easier for data scientists and statisticians to study gun violence and make informed predictions about future trends.
+Our dataset get from the Kaggle: this dataset aims to change that; they make a record of more than 260k gun violence incidents, with detailed information about each incident, available in CSV format. They hope that this will make it easier for data scientists and statisticians to study gun violence and make informed predictions about future trends.
 
 The CSV file contains data for all recorded gun violence incidents in the US between January 2013 and March 2018, inclusive.
         """
@@ -80,18 +80,18 @@ The CSV file contains data for all recorded gun violence incidents in the US bet
                                        holding bouquets of flowers — stopped by a memorial in the 1000 block of East 54th street Wednesday evening. \
                                        Madeline Kenney/Sun-Times")
 
-        st.header("After the accident", anchor=None)
+        st.header("After the Accident", anchor=None)
         st.write(self.ZhengStory)
 
-        st.header("This ripple has gone international", anchor=None)
+        st.header("This Ripple Has Gone International", anchor=None)
         st.image(self.image_influence, width=700,
                  caption="Students rally on Nov. 16, 2021, to call attention to recent violence surrounding the University of Chicago campus.")
         st.write(self.influence)
 
-        st.header("Different calls for justice", anchor=None)
+        st.header("Different Calls for Justice", anchor=None)
         st.write(self.CareNotCops)
 
-        st.header("Our project", anchor=None)
+        st.header("Our Project", anchor=None)
         st.markdown(self.MText2)
 
         st.header("The dataset", anchor=None)

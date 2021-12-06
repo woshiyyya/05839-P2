@@ -1,13 +1,17 @@
+from numpy import add
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
 from hydralit import HydraApp
 from hydralit import HydraHeadApp
 from preprocess_page import *
+from data_stat_page import *
+
+from utils import add_sidebar
 
 @st.cache
 def load_dataset():
-    df = pd.read_csv("data.csv")
+    df = pd.read_csv("data/data.csv")
     df = df[pd.notnull(df['longitude']) & pd.notnull(df['latitude'])]
     return df
 
@@ -98,12 +102,9 @@ class MainApp(HydraHeadApp):
 
     def run(self):
         st.title("U.S. Gun Shots")
-        st.sidebar.selectbox(
-            "How would you like to be contacted?",
-            ("Email", "Home phone", "Mobile phone")
-        )
         self._app.make_country_map()
         self._app.make_city_map()
+        add_sidebar()
 
 
 if __name__ == "__main__":
@@ -121,14 +122,14 @@ if __name__ == "__main__":
     )
 
     app.add_app("Home", app=MainApp())
+    app.add_app("Data Statistics", app=DataStatApp())
     app.add_app("Preprocess", app=AppPreprocessPage())
     app.add_app("Presentation", app=AppVideoPage())
-    app.add_app("Contacts", app=AppContactPage())
 
     complex_nav = {
         'Home': ['Home'],
+        'Data Statistics': ['Data Statistics'],
         'Preprocess': ['Preprocess'],
         'Presentation': ['Presentation'],
-        'Contacts': ['Contacts'],
     }
     app.run(complex_nav)

@@ -1,12 +1,14 @@
 import streamlit as st
 from hydralit import HydraHeadApp
 
+from utils import add_sidebar
+
 class AppPreprocessPage(HydraHeadApp):
     def __init__(self) -> None:
         self.text_loadSubData = "We load the dataset, and select the corresponding columns which maybe used in our image."
         self.code_loadSubData = """
 def load_dataset():
-    df = pd.read_csv("data.csv")
+    df = pd.read_csv("data/data.csv")
     df = df[pd.notnull(df['longitude']) & pd.notnull(df['latitude'])]
     return df
 
@@ -86,6 +88,7 @@ get_unique_name(df,'participant_gender_map')
         st.header("Find enumerate type", anchor=None)
         st.write(self.text_findUniqueType)
         st.code(self.code_findUniqueType, language="python")
+        add_sidebar()
 
 
 class AppContactPage(HydraHeadApp):
@@ -107,6 +110,7 @@ class AppVideoPage(HydraHeadApp):
     def run(self):
         st.title("Presentation")
         st.video(self.url)
+        add_sidebar()
 
 
 if __name__ == "__main__":

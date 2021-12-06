@@ -2,3 +2,6 @@ streamlit==1.0.0
 pandas==1.3.4
 pydeck
 hydralit
+scipy
+plotly
+pickle

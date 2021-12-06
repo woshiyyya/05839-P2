@@ -6,6 +6,7 @@ from hydralit import HydraApp
 from hydralit import HydraHeadApp
 from preprocess_page import *
 from data_stat_page import *
+from intro_page import *
 
 from utils import add_sidebar
 import plotly.graph_objects as go
@@ -143,13 +144,15 @@ if __name__ == "__main__":
         navbar_theme=over_theme,
     )
 
-    app.add_app("Home", app=MainApp())
+    app.add_app("Home", app=AppIntro())
+    app.add_app("Geo Distribution", app=MainApp())
     app.add_app("Data Statistics", app=DataStatApp())
     app.add_app("Preprocess", app=AppPreprocessPage())
     app.add_app("Presentation", app=AppVideoPage())
 
     complex_nav = {
         'Home': ['Home'],
+        'Geo Distribution': ['Geo Distribution'],
         'Data Statistics': ['Data Statistics'],
         'Preprocess': ['Preprocess'],
         'Presentation': ['Presentation'],

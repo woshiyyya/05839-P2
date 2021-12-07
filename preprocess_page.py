@@ -106,7 +106,7 @@ class AppContactPage(HydraHeadApp):
 
 class AppVideoPage(HydraHeadApp):
     def __init__(self) -> None:
-        self.url = "https://www.youtube.com/embed/_5XkJC3xuc0?controls=0&showinfo=0&modestbranding=1&wmode=transparent&disablekb=1&rel=0&enablejsapi=1&origin=https%3A%2F%2Fwww.cmu.edu&widgetid=1"
+        self.url = "https://youtu.be/V3ZnOVy5A0k"
 
     def run(self):
         st.title("Presentation")

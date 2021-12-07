@@ -9,7 +9,7 @@ def add_sidebar():
     st.sidebar.markdown("**Interactive DS Group 23**")
     st.sidebar.markdown("Tianyi Sun, <tsun2@andrew.cmu.edu>")
     st.sidebar.markdown("Yufan Song, <yufans@andrew.cmu.edu>")
-    st.sidebar.markdown("YunXuan Xiao, <yunxuan2@andrew.cmu.edu>")
+    st.sidebar.markdown("Yunxuan Xiao, <yunxuan2@andrew.cmu.edu>")
     st.sidebar.markdown("Zhouyang Li, <zhouyanl@andrew.cmu.edu>")
     
     st.sidebar.subheader("Github Repo:")
